@@ -1,0 +1,75 @@
+body {
+    font-family: monospace;
+    font-size: 50px;
+    margin-left: 50px;
+}
+
+.board {
+    width:  400px;
+    height: 400px;
+}
+
+
+
+.sight {
+    --size: 60px;
+
+    caret-color: transparent;
+    min-width: var(--size);
+    width: var(--size);
+    min-height: var(--size);
+    height: var(--size);
+}
+
+table {
+    margin-top: 50px;
+}
+
+.size-config {
+    font-size: 20px;
+    color: #005282;
+    text-decoration: underline;
+}
+
+.size-config:hover {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.sight:focus {
+    outline: -webkit-focus-ring-color auto 1px;
+}
+
+.size-config:active {
+    background-color: #005282;
+    color: white;
+}
+
+
+td {
+    border: 1px solid #333;
+    text-align: center;
+}
+
+.noborder {
+    border-width: 0;
+}
+
+#solve-button {
+    width: 100px;
+    height: 50px;
+    font-size: 20px;
+    font-family: monospace;
+    margin-top: 60px;
+    margin-bottom: 60px;
+    margin-bottom: 10px;
+    border-style: hidden;
+}
+
+#solve-button:hover {
+    border-style: outset;
+}
+
+#solutions-found-text {
+    font-size: 20px;
+}

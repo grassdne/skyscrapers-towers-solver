@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skyscrapers Solver</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p style="margin-bottom: 0; font-size: 25px;">Size</p>
+  <span class="size-config" onclick="setLength(3)">3</span>
+  <span class="size-config" onclick="setLength(4)">4</span>
+  <span class="size-config" onclick="setLength(5)">5</span>
+  <span class="size-config" onclick="setLength(6)">6</span>
+  <span class="size-config" onclick="setLength(7)">7</span>
+
+
+  <table id="outline">
+  </table>
+  <button type="button" id="solve-button">Solve!</button>
+  <div id="solutions-found-text" hidden>
+    solutions found!
+  </div>
+  <div id="solutions">
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>
