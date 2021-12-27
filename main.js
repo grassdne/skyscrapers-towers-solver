@@ -325,6 +325,7 @@ function setupOutlineSights() {
     for (let i = 0; i < outlineSights.length; ++i) {
         let sight = outlineSights[i];
         sight.contentEditable = true;
+        sight.inputMode = "numeric";
         // sight.tabIndex = 1;
         sight.addEventListener("beforeinput", e => {
             e.preventDefault();
