@@ -9,16 +9,19 @@
 </head>
 <body>
   <p style="margin-bottom: 0; font-size: 25px;">Size</p>
-  <span class="size-config" onclick="setLength(3)">3</span>
-  <span class="size-config" onclick="setLength(4)">4</span>
-  <span class="size-config" onclick="setLength(5)">5</span>
-  <span class="size-config" onclick="setLength(6)">6</span>
-  <span class="size-config" onclick="setLength(7)">7</span>
+  <button class="btn size-config" onclick="setLength(3)">3</button>
+  <button class="btn size-config" onclick="setLength(4)">4</button>
+  <button class="btn size-config" onclick="setLength(5)">5</button>
+  <button class="btn size-config" onclick="setLength(6)">6</button>
+  <button class="btn size-config" onclick="setLength(7)">7</button>
+  <button class="btn size-config" onclick="setLength(8)">8</button>
+  <br>
+  <button id="clear-button" class="btn">Clear</button>
 
 
   <table id="outline">
   </table>
-  <button type="button" id="solve-button">Solve!</button>
+  <button type="button" class="btn" id="solve-button">Solve!</button>
   <div id="solutions-found-text" hidden>
     solutions found!
   </div>

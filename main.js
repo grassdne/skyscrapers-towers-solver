@@ -1,247 +1,39 @@
-let north   = [0, 0, 0, 0]
-let east    = [0, 0, 0, 0]
-let south   = [0, 0, 0, 0]
-let west    = [0, 0, 0, 0]
+let north   = [0, 0, 0, 0, 0]
+let east    = [0, 0, 0, 0, 0]
+let south   = [0, 0, 0, 0, 0]
+let west    = [0, 0, 0, 0, 0]
 
-let size = 4;
-
-
-let solution = [];
-
-
-const strSolutions = []
+let size = 5;
+let oldsize;
 
 const divSolutions = document.getElementById("solutions");
 
 
 let htmlSolution;
-let numSolutions;
 
 const outline = document.getElementById("outline");
 
+let numSolutions;
+
 let outlineSights;
+let towerInputs;
 
 generateOutline();
 
-setupOutlineSights();
-
-function rangeSet(a, b) {
-    const set = new Set();
-    for (let i = a; i < b; ++i) {
-        set.add(i);
-    }
-    return set;
-}
+setupOutline()
 
 
-function intersectionSet(a, b) {
-    const _intersection = new Set()
-    for (let elem of setB) {
-        if (setA.has(elem)) {
-            _intersection.add(elem)
-        }
-    }
-    return _intersection
-}
-
-
-class Skyscraper {
-    constructor(value = 0) {
-        this.height = value;
-        this.possibilities = rangeSet(1, size+1);
-    }
-}
-
-function eliminateImpossibilities() {
-    for (let i = 0; i < size; ++i) {
-        AtSightlineRemoveImpossibilities(north[i], walkNorthSightline(i))
-        AtSightlineRemoveImpossibilities(east[i], walkEastSightline(i))
-        AtSightlineRemoveImpossibilities(south[i], walkSouthSightline(i))
-        AtSightlineRemoveImpossibilities(west[i], walkWestSightline(i))
-    }
-
-    while (removeBadPossiblities());
-}
-
-function removeBadPossiblities() {
-    let useful = false;
-    
-    for (let i = 0; i < size; ++i) {
-        for (let j = 0; j < size; ++j) {
-            const skyscraper = solution[i][j];
-            if (skyscraper.possibilities.size == 1 && !skyscraper.height) {
-                useful = true;
-
-                const height = skyscraper.possibilities.values().next().value;
-
-                skyscraper.height = height;
-                removePossibilityInRowColumn(height, i, j);
-                skyscraper.possibilities = new Set([height]);
-            }
-        } 
-    }
-
-    return useful;
-}
-
-function removePossibilityInRowColumn(num, row, col) {
-    for (let i = 0; i < size; ++i) {
-        solution[row][i].possibilities.delete(num) 
-        solution[i][col].possibilities.delete(num)
-    }
-}
-
-function AtSightlineRemoveImpossibilities(numVisible, sightline) {
-    if (!numVisible) return;
-
-    if (numVisible == 1) {
-        const skyscraper = sightline.next().value;
-        skyscraper.possibilities = new Set([size]);
-        // skyscraper.height = size;
-        return;
-    }
-
-    for (let j = 0; j < size; ++j) {
-        const skyscraper = sightline.next().value;
-        for (let n = size - numVisible + j + 2; n <= size; ++n) {
-            skyscraper.possibilities.delete(n);
-        }
-    }
-}
-
-function solve(rowStart = 0) {
-    for (let i = rowStart; i < size; ++i) {
-        for (let j = 0; j < size; ++j) {
-            const tile = solution[i][j];
-            if (tile.height) continue;
-
-            for (let n of tile.possibilities) {
-                if (tryPlaceSkyscraper(i, j, n)) {
-                    solve(i)
-                    tile.height = 0;
-                }
-            }
-            return;
-        }
-    }
-    htmlSolution.innerHTML = solutionHtmlString();
-    
-    console.log("solution found");
-    numSolutions++;
-
-    htmlSolution = document.createElement("table");
-    htmlSolution.className = "board";
-
-    divSolutions.appendChild(htmlSolution);
-
-}
-
-function initializeSolution() {
-    solution = [];
-    for (let i = 0; i < size; ++i) {
-        solution[i] = [];
-        for (let j = 0; j < size; ++j) {
-            solution[i][j] = new Skyscraper();
-        }
-    }
-}
-
-
-function tryPlaceSkyscraper(row, col, val) {
-    if (solution[row][col].height) return false;
-
-    for (tile of solution[row]) {
-        if (tile.height == val) {
-            return false;
-        }
-    }
-    if (Array.from(solution, x => x[col].height).includes(val)) {
-        return false;
-    }
-
-    solution[row][col].height = val;
-    
-
-    if (northViewValid(col) 
-        && eastViewValid(row) 
-        && southViewValid(col) 
-        && westViewValid(row)) {
-            return true;
-     }
-
-     solution[row][col].height = 0;
-     return false;  
-}
-
-function northViewValid(col) {
-    return isValidSightline(north[col], walkNorthSightline(col));
-}
-
-function southViewValid(col) {
-    return isValidSightline(south[col], walkSouthSightline(col));
-}
-
-function westViewValid(row) {
-    return isValidSightline(west[row], walkWestSightline(row));
-}
-
-function eastViewValid(row) {
-    return isValidSightline(east[row], walkEastSightline(row));
-}
-
-function *walkSouthSightline(col) {
-    for (let i = size-1; i >= 0; --i) {
-        yield solution[i][col];
-    }
-}
-
-function *walkNorthSightline(col) {
-    for (let i = 0; i < size; ++i) {
-        yield solution[i][col];
-    }
-}
-
-function *walkEastSightline(row) {
-    for (let i = size-1; i >= 0; --i) {
-        yield solution[row][i];
-    }
-}
-
-function *walkWestSightline(row) {
-    for (let i = 0; i < size; ++i) {
-        yield solution[row][i];
-    }
-}
-
-
-function isValidSightline(visibleGoal, sightline) {
-    if (!visibleGoal) return true;
-    
-    let seen = 0;
-    let tallest = 0;
-
-    for (let tile of sightline) {
-        if (!tile.height) return true;
-        if (tile.height > tallest) {
-            ++seen;
-            tallest = tile.height;
-
-        }
-    }
-
-    return seen == visibleGoal
-}
-
-
-function solutionHtmlTable() {
+function appendNewSolutionHtml(solution) {
     const table = document.createElement("table");
     table.className = 'board';
 
-    table.innerHTML = solutionHtmlString();
-    return table;
+    table.innerHTML = solutionHtmlString(solution);
+    console.log(table.innerHTML);
+
+    divSolutions.appendChild(table);
 }
 
-function solutionHtmlString() {
+function solutionHtmlString(solution) {
 
     let s = '';
     for (let row of solution) {
@@ -263,40 +55,61 @@ solveButton.onclick = startSolving;
 
 
 function startSolving() {
-    enableSolveButton();
+    disableSolveButton();
     solutionsFoundText.hidden = true;
     numSolutions = 0;
+    divSolutions.innerHTML = '';
 
     console.time("Solving")
-    initializeSolution();
-    eliminateImpossibilities();
 
-    htmlSolution = solutionHtmlTable();
-    divSolutions.innerHTML = '';
-    divSolutions.appendChild(htmlSolution);
+    let solverWorker = new Worker("solverWorker.js")
+    solverWorker.postMessage({
+        north: north,
+        east: east,
+        south: south,
+        west: west,
+        startingTowers: Array.from(towerInputs, elem => parseInt(elem.innerText) || 0)
+    })
 
-    setTimeout(() => {
-        solve()
+    solverWorker.onmessage = (e) => {
+        const data = e.data;
+        switch (data.type) {
+            case "UPDATE": 
+                // console.log("updating solution");
+                const tbls = divSolutions.children;
+                tbls[tbls.length-1].innerHTML = solutionHtmlString(data.solution)
+                break;
 
-        console.log("SOLVING COMPLETED")
-        console.timeEnd("Solving")
+            case "NEW":
+                console.log("new solution");
+                appendNewSolutionHtml(data.solution)  
+                numSolutions++;
+                break;
 
-        updateSolutionsFound()
-        disableSolveButton();
-    }, 0); 
+            case "DONE":
+                console.log("SOLVING COMPLETED")
+                console.timeEnd("Solving")
+                enableSolveButton();
+                updateSolutionsFound()
+                solverWorker.terminate();
+                break;
+        }
+    }
 }
 
-function enableSolveButton() {
+function disableSolveButton() {
     solveButton.disabled = true;
     solveButton.innerText = "solving..."
 }
 
-function disableSolveButton() {
+function enableSolveButton() {
     solveButton.disabled = false;
     solveButton.innerText = "Solve!";
 }
 
 function updateSolutionsFound() {
+    divSolutions.children[divSolutions.children.length-1].remove()
+    --numSolutions;
     solutionsFoundText.innerHTML = `<b>${numSolutions}</b> complete solution${numSolutions == 1 ? '' : 's'} found.`;
     solutionsFoundText.hidden = false;
 }
@@ -315,39 +128,144 @@ function setLength(newLen) {
         east.pop();
         west.pop();
     }
+    oldsize = size;
     size = newLen;
     generateOutline();
-    setupOutlineSights();
+    setupOutline();
 }
 
-function setupOutlineSights() {
-    outlineSights = outline.getElementsByClassName("sight");
-    for (let i = 0; i < outlineSights.length; ++i) {
-        let sight = outlineSights[i];
-        sight.contentEditable = true;
-        sight.inputMode = "numeric";
-        // sight.tabIndex = 1;
-        sight.addEventListener("beforeinput", e => {
+
+function setupOutline() {
+    outlineSights = outline.getElementsByClassName("sight")
+    towerInputs = outline.getElementsByClassName("towerInput")
+
+    setupTowerInputs(outlineSights)
+    setupTowerInputs(towerInputs)
+
+    tabIndexTowerInputs()
+}
+
+function setupTowerInputs(inputs) {
+    for (let i = 0; i < inputs.length; ++i) {
+        let elem = inputs[i];
+        elem.contentEditable = true;
+        elem.inputMode = "numeric";
+        elem.addEventListener("beforeinput", e => {
             e.preventDefault();
         })
 
-        sight.addEventListener("keydown", (e) => {
-            if (e.key == "Backspace") {
-                sight.innerText = '';
+        elem.addEventListener("keydown", (e) => {
+
+            const rowIndex = elem.parentElement.rowIndex
+
+            switch (e.key) {
+                case "Backspace":
+                    elem.innerText = '';
+                    break;
+                case "ArrowUp":
+                    outline.rows[rowIndex - 1]?.cells[elem.cellIndex]?.focus()
+                    return;
+                case "ArrowRight":
+                    outline.rows[rowIndex]?.cells[elem.cellIndex + 1]?.focus()
+                    return;
+                case "ArrowDown":
+                    outline.rows[rowIndex + 1]?.cells[elem.cellIndex]?.focus()
+                    return;
+                case "ArrowLeft":
+                    outline.rows[rowIndex]?.cells[elem.cellIndex - 1]?.focus()
+                    return;
             }
+
             const num = parseInt(e.key);
 
             if (!isNaN(num) && num && num <= size) {
-                sight.innerText = num;
-                (outlineSights[i+1] ?? solveButton).focus()
+                elem.innerText = num;
+                
+                focusNextTabIndex(inputs, i) || solveButton.focus()
             }
         }, true);
     }
 }
 
+function focusNextTabIndex(elems, curr) {
+    const currIndex = elems[curr].tabIndex
+    for (let i = curr+1; i < elems.length; ++i) {
+        if (elems[i].tabIndex == currIndex) {
+            elems[i].focus()
+            return true
+        }
+    }
+    for (const e of elems) {
+        if (e.tabIndex == currIndex + 1) {
+            e.focus()
+            return true
+        }
+    }
+    return false
+}
+
+function tabIndexTowerInputs() {
+    
+    for (let i = 0; i < size; ++i) {
+        outlineSights[i].tabIndex = 1
+    }
+    for (let i = size; i < size * 3; i+=2) {
+        outlineSights[i].tabIndex = 2
+    }
+    for (let i = size + 1; i < size * 3; i+=2) {
+        outlineSights[i].tabIndex = 3
+    }
+    for (let i = size * 3; i < size * 4; ++i) {
+        outlineSights[i].tabIndex = 4
+    }
+    for (const tower of towerInputs) {
+        tower.tabIndex = 100
+    }
+}
+
+function setupTowerInput(elem) {
+    elem.contentEditable = true;
+    elem.inputMode = "numeric";
+    // elem.tabIndex = 1;
+    elem.addEventListener("beforeinput", e => {
+        e.preventDefault();
+    })
+
+    elem.addEventListener("keydown", (e) => {
+        if (e.key == "Backspace") {
+            elem.innerText = '';
+        }
+        const num = parseInt(e.key);
+
+        if (!isNaN(num) && num && num <= size) {
+            elem.innerText = num;
+            (outlineSights[i+1] ?? solveButton).focus()
+        }
+    }, true);
+}
+
 function setSight(direction, index, value) {
     direction[index] = parseInt(value) || 0;
 }
+
+function clear() {
+    for (elem of outlineSights) {
+        elem.dispatchEvent(new KeyboardEvent('keydown',{'key':'Backspace'}));
+    }
+    for (elem of towerInputs) {
+            elem.dispatchEvent(new KeyboardEvent('keydown',{'key':'Backspace'}));
+        }
+}
+
+function prevTowerInputValue(i, j) {
+    if (typeof towerInputs === "undefined") {
+        return '';
+    }
+    if (j >= oldsize) return '';
+    return towerInputs[i*oldsize+j]?.innerText || ''
+}
+
+document.getElementById("clear-button").onclick = clear;
 
 function generateOutline() {
     let s = '';
@@ -360,7 +278,10 @@ function generateOutline() {
             <td class="noborder"></td>`
 
     for (let i = 0; i < size; ++i) {
-        s += `<td class="sight" onkeydown="setSight(north, ${i}, this.innerText);">${north[i] || ''}</td>`
+        s += `<td class="sight"
+                  style="top"
+                  onkeydown="setSight(north, ${i}, this.innerText);">${north[i] || ''}
+              </td>`
     }
     s += `    <td class="noborder"></td>
             </tr>`
@@ -370,8 +291,11 @@ function generateOutline() {
     for (let i = 0; i < size; ++i) {
         s += `<tr>
                 <td class="sight" onkeydown="setSight(west, ${i}, this.innerText)">${west[i] || ''}</td>
-                <td colspan="${size}" class="noborder"></td>
-                <td class="sight" onkeydown="setSight(east, ${i}, this.innerText)">${east[i] || ''}</td>
+                `
+        for (let j = 0; j < size; ++j) {
+            s+=`<td class="towerInput">${prevTowerInputValue(i, j)}</td>`
+        }
+        s +=   `<td class="sight" onkeydown="setSight(east, ${i}, this.innerText)">${east[i] || ''}</td>
               </tr>`
     }
 

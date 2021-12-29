@@ -7,12 +7,15 @@ body {
 .board {
     width:  400px;
     height: 400px;
-    border-spacing: 0;
+    margin-top: 50px;
 }
 
+.towerInput {
+    border-color: rgb(233, 233, 233);
+    color: grey;
+}
 
-
-.sight {
+.towerInput, .sight {
     --size: 60px;
 
     caret-color: transparent;
@@ -22,24 +25,35 @@ body {
     height: var(--size);
 }
 
+.sight {    
+    border-color: rgb(53, 53, 53);
+    border-style: dashed;
+}
+
+.sight:focus {
+    outline: -webkit-focus-ring-color dashed 2px;
+}
+
+.towerInput:focus {
+    outline: -webkit-focus-ring-color auto 1px;
+}
+
+
 table {
-    margin-top: 50px;
+    border-spacing: 0;
 }
 
 .size-config {
     font-size: 20px;
-    color: #005282;
-    text-decoration: underline;
+    margin-right: 0;
+    /* color: #005282; */
+    /* text-decoration: underline; */
 }
-
+/* 
 .size-config:hover {
     text-decoration: none;
     cursor: pointer;
-}
-
-.sight:focus {
-    outline: -webkit-focus-ring-color auto 1px;
-}
+} */
 
 .size-config:active {
     background-color: #005282;
@@ -59,18 +73,36 @@ td {
 #solve-button {
     width: 100px;
     height: 50px;
-    font-size: 20px;
-    font-family: monospace;
     margin-top: 60px;
     margin-bottom: 60px;
     margin-bottom: 10px;
-    border-style: hidden;
 }
 
-#solve-button:hover {
-    border-style: outset;
+#solve-button:disabled {
+    outline-width: 0;
 }
 
 #solutions-found-text {
     font-size: 20px;
+}
+
+#clear-button {
+    width: 80px;
+    height: 40px;
+    outline-color: red;
+    color: rgb(107, 65, 65);
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+
+.btn {
+    font-family: monospace;
+    border-style: hidden;
+    font-size: 20px;
+}
+
+.btn:hover {
+    /* border-style: outset; */
+    outline: black outset 2px;
 }
